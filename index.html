@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="./index.css" />
+
+  </head>
+  <body onload="init();">
+    <div
+      class="container h-100 w-100 d-flex justify-content-center align-items-center flex-column"
+    >
+      <!--- cam live to scan driver lisence --->
+
+          <div class="webcam-container">
+            <div class="webcam-box">
+              <video
+              id="video"
+              class="cam-live"
+              poster="./poster-webcam.png"
+            ></video>
+            <div class="cam-effect-scan"></div>
+            <div
+              class="cam-loading-spinner d-none justify-content-center align-items-center flex-column position-absolute h-100 w-100"
+            >
+              <div class="spinner-border" role="status"></div>
+              <span>Loading...</span>
+            </div>
+            </div>
+
+            <div class="action-bar my-4 d-flex align-items-center justify-content-between">
+              <button
+                type="button"
+                class="btn-start-cam btn btn-primary"
+                onclick="startWebcam();"
+              >
+                Start cam
+              </button>
+              <button
+                disabled
+                type="button"
+                class="btn-stop-cam btn btn-danger disabled"
+                onclick="stopWebcam();"
+              >
+                Stop cam
+              </button>
+              <button
+                disabled
+                type="button"
+                class="btn-take-snapshot btn btn-success disabled"
+                onclick="snapshotPicture();"
+              >
+                Take picture
+              </button>
+  
+        </div>
+          </div>
+
+      <!--- modal detail infor of driver lisence --->
+      <div
+        class="modal fade"
+        id="modal-detail-infor"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabindex="-1"
+        aria-labelledby="staticBackdropLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">
+                Detail information
+              </h5>
+            </div>
+            <div class="modal-body">
+              <ul class="list-group">
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  full name
+                  <span class="full-name">hungtm</span>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  birth of day
+                  <span class="birth-day">05-09-19996</span>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  address
+                  <span class="address">cau giay - ha noi</span>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  phone
+                  <span class="phoneNumber">0964899999</span>
+                </li>
+              </ul>
+            </div>
+            <div class="modal-footer justify-content-center">
+              <button
+                type="button"
+                class="btn btn-primary"
+                onclick="handleCloseModal()"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <div>
+        <canvas id="myCanvas" width="400" height="400"></canvas>
+        <canvas id="myCanvas1" width="400" height="400"></canvas>
+      </div> -->
+    </div>
+  </body>
+  <script src="./detectDevice.js" ></script>
+  <script src="put_image.js"></script>
+  <!-- <script src="script.js"></script> -->
+  <script>
+    //--------------------
+    // GET USER MEDIA CODE
+    //--------------------
+    navigator.getUserMedia =
+      navigator.getUserMedia ||
+      navigator.webkitGetUserMedia ||
+      navigator.mozGetUserMedia ||
+      navigator.msGetUserMedia;
+
+    let video;
+    let webcamStream;
+    function startWebcam() {
+        // Swal.fire({title:"Error!", icon: 'error',text: "Something went wrong!", width: '400px'});
+      // const constraints = { 
+      //     audio: false, 
+      //     video:  {
+      //       width: { ideal: 1280 },
+      //       height: { ideal: 720 }
+      //     } 
+      // };
+      var facingMode = "user";
+var constraints = {
+  audio: false,
+  video: {
+   facingMode: facingMode
+  }
+}
+      if (navigator.getUserMedia) {
+        navigator.getUserMedia(
+          {
+            video: true,
+            audio: false,
+
+          },
+          function (localMediaStream) {
+            video.srcObject = localMediaStream;
+            webcamStream = localMediaStream;
+            btnTakeSnapshotElm.classList.remove('disabled');
+            btnStopCamElm.classList.remove('disabled');
+            btnStopCamElm.disabled = false;
+            btnTakeSnapshotElm.disabled = false;
+          },
+
+          function (err) {
+            console.log("The following error occured: " + err);
+          }
+        );
+      } else {
+        console.log("getUserMedia not supported");
+      }
+    }
+
+    function stopWebcam() {
+      webcamStream.getTracks().forEach((track) => {
+        track.stop();
+      });
+      video.srcObject = null;
+      webcamStream = null;
+      btnTakeSnapshotElm.classList.add('disabled');
+      btnStopCamElm.classList.add('disabled');
+      btnStopCamElm.disabled = true;
+      btnTakeSnapshotElm.disabled = true;
+    }
+    //---------------------
+    // TAKE A SNAPSHOT CODE
+    //---------------------
+    let canvas, ctx;
+    let modalDetailInfor;
+    let btnStartCamElm;
+    let btnStopCamElm;
+    let btnTakeSnapshotElm;
+    let isScanPicture = false;
+    function init() {
+      canvas = document.createElement("canvas");
+      ctx = canvas.getContext("2d");
+      canvas.width = 500;
+      canvas.height = 600
+      btnTakeSnapshotElm = document.querySelector('.btn-take-snapshot');
+      btnStartCamElm = document.querySelector('.btn-start-cam');
+      btnStopCamElm = document.querySelector('.btn-stop-cam');
+      driverNameElm = document.querySelector('.full-name');
+      video = document.querySelector("#video");
+      video.setAttribute('autoplay', '');
+      video.setAttribute('muted', '');
+      video.setAttribute('playsinline', '');
+
+      // canvas1 = document.getElementById("myCanvas1");
+      // ctx1 = canvas1.getContext("2d");
+    }
+
+    function snapshotPicture() {
+      if (webcamStream) {
+        btnStopCamElm.classList.add('disabled');
+        btnTakeSnapshotElm.classList.add('disabled');
+        btnStopCamElm.disabled = true;
+        btnTakeSnapshotElm.disabled = true;
+        const scanVideoElm = document.querySelector(".cam-effect-scan");
+        const loadingSpinnerElm = document.querySelector(
+          ".cam-loading-spinner"
+        );
+        let percenScan = 0;
+        const scanProgressInterval = setInterval(() => {
+          percenScan += 2.5;
+          console.log(percenScan);
+          if (percenScan <= 100) {
+            scanVideoElm.classList.add("active");
+          } else {
+            loadingSpinnerElm.classList.add("d-flex");
+            loadingSpinnerElm.classList.remove("d-none");
+            scanVideoElm.classList.remove("active");
+          }
+        }, 100);
+
+        setTimeout(() => {
+          percenScan = 0;
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.width);
+          const uint8ArrData = new Uint8Array(imageData.data);
+          // pass the width and height too !!
+          passToWasm(uint8ArrData, canvas.width, canvas.height);
+          loadingSpinnerElm.classList.add("d-none");
+          loadingSpinnerElm.classList.remove("d-flex");
+          btnStopCamElm.classList.remove('disabled')
+          btnStopCamElm.disabled = false;
+          btnTakeSnapshotElm.classList.remove('disabled')
+          btnTakeSnapshotElm.disabled = false;
+          Swal.fire({title:"Success!", icon: 'success',text: "", width: '400px'}).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+              driverNameElm.innerText = 'dddddd'
+
+              // Swal.fire("Saved!", "", "Something went wrong!");
+              modalDetailInfor = new bootstrap.Modal(
+                document.getElementById("modal-detail-infor"),
+                {
+                  backdrop: true,
+                }
+              );
+              modalDetailInfor.show();
+            }
+          });
+          clearInterval(scanProgressInterval);
+        }, 5000);
+      }
+    }
+
+    const handleCloseModal = () => {
+      modalDetailInfor.hide();
+    };
+
+    function passToWasm(imageData, wid, hig) {
+      const { length } = imageData;
+      const memory = Module._malloc(length); // Allocating WASM memory
+      HEAPU8.set(imageData, memory); // Copying JS image data to WASM memory
+      Module._grayScale(memory, length); // Calling WASM method
+      const filteredImageData = HEAPU8.subarray(memory, memory + length); // Converting WASM data to JS Image data
+      Module._free(memory); // Freeing WASM memory
+      // writeImageDataToCanvas(filteredImageData, wid, hig);
+    }
+
+    function writeImageDataToCanvas(data, width, height) {
+      canvas1.width = width;
+      canvas1.height = height;
+      var imageData = ctx1.createImageData(width, height);
+      imageData.data.set(data);
+      ctx1.putImageData(imageData, 0, 0);
+    }
+  </script>
+</html>
+

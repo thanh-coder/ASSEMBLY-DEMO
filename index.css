@@ -1,0 +1,88 @@
+body, 
+body.swal2-height-auto {
+    /* width: 100vh; */
+    height: 100vh !important;
+}
+.cam-effect-scan {
+    height: 100%;
+    width: 50px;
+    background-color: #df9f9f;
+    opacity: 0.5;
+    position: absolute;
+    top:0;
+    display:none;
+}
+
+.cam-effect-scan.active {
+    display:block;
+    animation: scanEffect 4s infinite linear;
+}
+
+.webcam-box {
+    width: 500px;
+    height: 600px;
+    position: relative;
+}
+.webcam-box .cam-loading-spinner {
+    top: 0;
+    left: 0;
+    background-color: #dcd1d1a6;
+}
+#video {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+.modal-dialog {
+    top: 25%;
+    z-index: 10040;
+    overflow: auto;
+    overflow-y: auto;
+  }
+
+  .modal-dialog .modal-content {
+    /* padding-left: 12px; */
+  }
+
+@keyframes scanEffect {
+  0% {transform: translateX(0px)}
+  10%  {transform: translateX(45px)}
+  20%  {transform: translateX(90px)}
+  30%  {transform: translateX(135px)}
+  40%  {transform: translateX(180px)}
+  50%  {transform: translateX(225px)}
+  60%  {transform: translateX(270px)}
+  70%  {transform: translateX(315px)}
+  80%  {transform: translateX(360px)}
+  90% {transform: translateX(405px)}
+  100% {transform: translateX(450px)}
+  }
+
+@media (max-width: 575.98px) { 
+.modal-dialog {
+    /* top: 50%; */
+  }
+ }
+
+@media (max-width: 767.98px) { 
+    /* .modal-dialog {
+        top: 50%;
+      } */
+
+ }
+
+@media (max-width: 991.98px) { 
+
+}
+
+@media (max-width: 1199.98px) { 
+    /* .modal-dialog {
+        top: 50%;
+      } */
+
+}
+
+@media (max-width: 1399.98px) { 
+
+}
